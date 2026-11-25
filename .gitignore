@@ -1,0 +1,12 @@
+/*
+!/.gitignore
+!/.nojekyll
+!/README.md
+!/index.html
+!/css/
+/css/*
+!/css/styles.css
+!/js/
+/js/*
+!/js/app.js
+!/js/dataService.js

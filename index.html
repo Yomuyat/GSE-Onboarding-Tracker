@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f1efff">
+  <title>GSE Onboarding Tracker</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <script defer src="js/dataService.js"></script>
+  <script defer src="js/app.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#" aria-label="GSE Onboarding Tracker home">
+      <span class="brand-mark">G</span>
+      <span><strong>GSE ONBOARDING TRACKER</strong><small>Graduate Sales Engineering</small></span>
+    </a>
+    <div class="header-actions">
+      <span id="last-updated" class="last-updated">Data not loaded</span>
+      <button id="refresh-button" class="button button-light" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <div id="error-banner" class="error-banner" role="alert" hidden></div>
+    <p class="status-line"><span id="save-status" role="status" aria-live="polite">Loading progress...</span>
+      <span class="subtle">Demo profiles. Progress is saved in this browser only.</span></p>
+
+    <section id="employee-view" aria-label="Onboarding dashboard">
+      <section class="summary-section" aria-labelledby="summary-heading">
+        <div class="summary-heading">
+          <div class="summary-title"><p class="eyebrow">YOUR ONBOARDING JOURNEY</p><h1 id="summary-heading">Summary</h1></div>
+          <div id="employee-profile" class="profile-bar" aria-label="Employee details">
+            <label class="sr-only" for="employee-select">Viewing GSE</label>
+            <select id="employee-select"></select>
+            <div id="employee-meta" class="profile-meta"></div>
+          </div>
+        </div>
+        <section id="employee-kpis" class="kpi-grid" aria-label="Readiness summary"></section>
+      </section>
+
+      <section class="next-action-panel" aria-labelledby="next-action-heading">
+        <span class="next-action-icon" aria-hidden="true">&#10022;</span>
+        <div class="next-action-copy" role="status" aria-live="polite">
+          <p class="eyebrow">NEXT ACTION</p>
+          <h2 id="next-action-heading">Finding your next milestone...</h2>
+          <p id="next-action-description"></p>
+        </div>
+        <button id="focus-next-stage" class="button button-primary" type="button" disabled>Go to stage &rarr;</button>
+      </section>
+
+      <section class="panel galaxy-journey" id="journey-section" aria-labelledby="journey-title">
+        <header class="journey-heading">
+          <div><p class="galaxy-eyebrow">EXPLORE. LEARN. LEVEL UP.</p><h2 id="journey-title">Galaxy journey</h2></div>
+          <div class="journey-controls">
+            <button id="journey-prev" class="space-button" type="button">Previous stage</button>
+            <p id="journey-location" role="status" aria-live="polite"></p>
+            <button id="journey-next" class="space-button space-button-primary" type="button">Next stage &rarr;</button>
+          </div>
+          <span id="journey-progress" class="journey-progress"></span>
+          <button id="character-open" class="space-button" type="button">Create your character</button>
+        </header>
+        <div class="journey-layout">
+          <div class="journey-world">
+            <div class="world-caption"><span>SECTOR 01 / THE LEARNING GALAXY</span><span id="explorer-name"></span></div>
+            <div id="galaxy-map" class="galaxy-map" role="group" aria-label="Onboarding stage map" aria-describedby="map-instructions">
+              <svg class="galaxy-route" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                <polyline points="8,28 22,28 36,28 50,28 64,28 78,28 92,28 92,72 78,72 64,72 50,72 36,72 22,72 8,72"></polyline>
+              </svg>
+              <span class="galaxy-decoration planet-distant" aria-hidden="true"></span>
+              <span class="galaxy-decoration shooting-star" aria-hidden="true"></span>
+              <div id="galaxy-stages"></div>
+              <span id="journey-character" class="journey-character" aria-hidden="true"></span>
+            </div>
+            <div class="world-legend"><span><i class="legend-current"></i>You are here</span>
+              <span><i class="legend-next"></i>Next action</span><span><i class="legend-complete"></i>On target</span>
+              <span><i class="legend-explore"></i>To explore</span></div>
+          </div>
+        </div>
+        <aside id="stage-detail" class="stage-detail" aria-label="Selected stage and learning resources" tabindex="-1"></aside>
+        <p id="map-instructions" class="journey-note">Select a planet or use Previous / Next. Arrow keys move between stages when the map is focused. Exploring never changes your scores.</p>
+        <p id="journey-storage-status" class="journey-note" role="status">Your character and map position are saved in this browser for each GSE.</p>
+      </section>
+    </section>
+    <footer class="page-footer">
+      <span>Progress does not sync across devices or browsers.</span>
+      <span>Clearing site data removes your saved progress.</span>
+    </footer>
+  </main>
+
+  <dialog id="update-dialog" class="update-dialog" aria-labelledby="form-title" aria-describedby="form-description">
+    <form id="update-form" method="dialog">
+      <header class="dialog-heading">
+        <div>
+          <p id="form-employee" class="eyebrow"></p>
+          <h2 id="form-title">Update level</h2>
+        </div>
+        <button id="form-close" class="dialog-close" type="button" aria-label="Close update form">&times;</button>
+      </header>
+      <div class="dialog-body">
+        <p id="form-description" class="muted"></p>
+        <div id="form-error" class="error-banner" role="alert" tabindex="-1" hidden></div>
+        <fieldset id="form-fields"></fieldset>
+      </div>
+      <footer class="dialog-actions">
+        <button id="form-cancel" class="button button-secondary" type="button">Cancel</button>
+        <button id="form-save" class="button button-primary" type="submit">Save progress</button>
+      </footer>
+    </form>
+  </dialog>
+
+  <dialog id="character-dialog" class="update-dialog character-dialog" aria-labelledby="character-title" aria-describedby="character-description">
+    <form id="character-form">
+      <header class="dialog-heading">
+        <div><p class="eyebrow">EXPLORER STUDIO</p><h2 id="character-title">Make it pixel-perfect.</h2></div>
+        <button id="character-close" class="dialog-close" type="button" aria-label="Close character editor">&times;</button>
+      </header>
+      <div class="dialog-body">
+        <p id="character-description" class="muted">Draw your own 12 &times; 12 explorer. Pick a color, then click or drag to paint. Use arrow keys and Space on the grid to paint with a keyboard.</p>
+        <div id="character-error" class="error-banner" role="alert" hidden></div>
+        <label class="resource-field"><span>Explorer name</span><input id="character-name" maxlength="24" required></label>
+        <div class="character-workspace">
+          <div id="pixel-grid" class="pixel-grid" role="group" aria-label="12 by 12 character drawing grid"></div>
+          <div class="character-tools">
+            <span class="pixel-tool-label">LIVE PREVIEW</span><div id="character-preview" class="character-preview"></div>
+            <label class="resource-field"><span>Paint color</span><input id="pixel-color" type="color" value="#81e6ff"></label>
+            <div id="pixel-palette" class="pixel-palette" role="group" aria-label="Paint palette"></div>
+            <button id="pixel-eraser" class="button button-secondary" type="button" aria-pressed="false">Eraser</button>
+          </div>
+        </div>
+        <div class="pixel-actions">
+          <button id="pixel-reset" class="button button-secondary" type="button">Reset astronaut</button>
+          <button id="pixel-clear" class="button button-secondary" type="button">Clear canvas</button>
+        </div>
+        <p class="subtle">Saved per GSE on this browser only. Cancel keeps your previous character.</p>
+      </div>
+      <footer class="dialog-actions">
+        <button id="character-cancel" class="button button-secondary" type="button">Cancel</button>
+        <button class="button button-primary" type="submit">Save character</button>
+      </footer>
+    </form>
+  </dialog>
+</body>
+</html>
